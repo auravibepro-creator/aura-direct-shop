@@ -467,13 +467,12 @@ function AdminPage() {
                     setCategoryForm({
                       ...categoryForm,
                       name: e.target.value,
-                      slug:
-                        categoryForm.id
-                          ? categoryForm.slug
-                          : e.target.value
-                              .toLowerCase()
-                              .replace(/[^a-z0-9]+/g, "-")
-                              .replace(/^-|-$/g, ""),
+                      slug: categoryForm.id
+                        ? (categoryForm.slug ?? "")
+                        : e.target.value
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, "-")
+                            .replace(/^-|-$/g, ""),
                     })
                   }
                 />
