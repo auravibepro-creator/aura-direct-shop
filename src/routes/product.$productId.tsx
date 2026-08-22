@@ -98,6 +98,18 @@ function ProductPage() {
             -{off}% OFF
           </span>
         ) : null}
+        {adminMode.editMode ? (
+          <button
+            type="button"
+            aria-label="Edit this product"
+            onClick={() => adminMode.openEditor(product)}
+            className="absolute inset-0 flex items-end justify-end bg-primary/15 p-3"
+          >
+            <span className="rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground">
+              Edit image, price & offer
+            </span>
+          </button>
+        ) : null}
       </div>
 
       {product.images.length > 1 ? (
