@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Star } from "lucide-react";
+import { Star, Pencil } from "lucide-react";
 
 import { discountPercent, formatPKR, type Product } from "@/lib/shop";
+import { useAdminMode } from "@/lib/admin-mode";
 
 export function ProductCard({ product }: { product: Product }) {
   const off = discountPercent(product);
+  const { editMode, openEditor } = useAdminMode();
 
   return (
     <Link
@@ -25,6 +27,23 @@ export function ProductCard({ product }: { product: Product }) {
           <span className="absolute top-2 left-2 rounded-full bg-deal px-2 py-0.5 text-[10px] font-bold text-deal-foreground">
             -{off}%
           </span>
+        ) : null}
+        {editMode ? (
+          <button
+            type="button"
+            aria-label={`Edit ${product.name}`}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openEditor(product);
+            }}
+            className="absolute inset-0 flex items-end justify-end bg-primary/20 p-2"
+          >
+            <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[10px] font-bold text-primary-foreground">
+              <Pencil className="size-3" />
+              Edit
+            </span>
+          </button>
         ) : null}
       </div>
       <div className="flex flex-1 flex-col gap-1 p-2.5">
