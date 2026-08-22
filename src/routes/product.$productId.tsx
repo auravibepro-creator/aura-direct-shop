@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCart } from "@/lib/cart";
 import { discountPercent, fetchProduct, formatPKR } from "@/lib/shop";
+import { useAdminMode } from "@/lib/admin-mode";
 
 export const Route = createFileRoute("/product/$productId")({
   head: () => ({
@@ -38,6 +39,7 @@ function ProductPage() {
   const [variant, setVariant] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const adminMode = useAdminMode();
 
   if (isPending) {
     return (
