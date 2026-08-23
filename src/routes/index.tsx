@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Flame, Truck, BadgePercent, ShieldCheck } from "lucide-react";
+import { Flame } from "lucide-react";
 
 import { ShopHeader } from "@/components/shop/ShopHeader";
 import { BottomNav } from "@/components/shop/BottomNav";
+import { CategoryTabs } from "@/components/shop/CategoryTabs";
+import { IncentivesBanner } from "@/components/shop/IncentivesBanner";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchCategories, fetchProducts } from "@/lib/shop";
