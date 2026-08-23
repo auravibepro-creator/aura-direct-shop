@@ -64,6 +64,10 @@
 @theme inline {
   --color-deal: var(--deal);
   --color-deal-foreground: var(--deal-foreground);
+  --color-success: var(--success);
+  --color-promo: var(--promo);
+  --color-promo-foreground: var(--promo-foreground);
+  --color-promo-border: var(--promo-border);
   --color-gold: var(--gold);
   --color-hot: var(--hot);
   --font-display: "Playfair Display", Georgia, serif;
