@@ -89,7 +89,42 @@ function CheckoutPage() {
 
   return (
     <div className="min-h-screen pb-28">
-      <ShopHeader title="Checkout" showBack />
+      <ShopHeader title={`Checkout (${ordered.length})`} showBack />
+
+      <div className="mx-3 mt-3 rounded-xl border border-success px-3 py-2.5 text-[12px] font-semibold text-success">
+        ✔ Free shipping over Rs. 2,500 · Cash on delivery · All data is safeguarded
+      </div>
+
+      {ordered.length > 0 ? (
+        <section className="mx-3 mt-3 rounded-2xl bg-card p-3 card-shadow">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold">Item details ({ordered.length})</h2>
+            <Link to="/cart" className="text-xs font-semibold text-muted-foreground">
+              View details ›
+            </Link>
+          </div>
+          <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
+            {ordered.map((item) => (
+              <div key={`${item.productId}-${item.variant ?? ""}`} className="w-24 shrink-0">
+                <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
+                  ) : null}
+                </div>
+                <p className="mt-1 text-[11px] font-bold text-deal">
+                  {formatPKR(item.price)}
+                  <span className="font-medium text-muted-foreground"> ×{item.quantity}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mx-3 mt-3 space-y-3 rounded-2xl bg-card p-4 card-shadow">
         <h2 className="text-sm font-bold">Delivery details</h2>
