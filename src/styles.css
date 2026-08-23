@@ -97,6 +97,10 @@
   --deal: oklch(0.62 0.23 25);
   --deal-foreground: oklch(0.99 0.01 60);
   --hot: oklch(0.65 0.24 20);
+  --success: oklch(0.58 0.17 145);
+  --promo: oklch(0.955 0.032 62);
+  --promo-foreground: oklch(0.48 0.05 60);
+  --promo-border: oklch(0.88 0.05 62);
   --destructive: oklch(0.58 0.24 27);
   --destructive-foreground: oklch(0.99 0.005 320);
   --border: oklch(0.92 0.012 320);
