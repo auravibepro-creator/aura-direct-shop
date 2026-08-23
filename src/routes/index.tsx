@@ -40,15 +40,18 @@ function Home() {
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return (products.data ?? []).filter((product) => {
+    const tabTerm = activeTab === "All" ? "" : activeTab.toLowerCase();
+    const filtered = (products.data ?? []).filter((product) => {
+      const text = `${product.name} ${product.description}`.toLowerCase();
       const matchesCategory = !activeCategory || product.category_id === activeCategory;
-      const matchesTerm =
-        !term ||
-        product.name.toLowerCase().includes(term) ||
-        product.description.toLowerCase().includes(term);
-      return matchesCategory && matchesTerm;
+      const matchesTerm = !term || text.includes(term);
+      const matchesTab = !tabTerm || text.includes(tabTerm);
+      return matchesCategory && matchesTerm && matchesTab;
     });
-  }, [products.data, search, activeCategory]);
+    // Keep the grid populated when a tab has no dedicated inventory yet.
+    if (filtered.length === 0 && tabTerm && !term && !activeCategory) return products.data ?? [];
+    return filtered;
+  }, [products.data, search, activeCategory, activeTab]);
 
   const flashDeals = useMemo(
     () => (products.data ?? []).filter((product) => product.is_featured).slice(0, 6),
