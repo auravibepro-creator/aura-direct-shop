@@ -56,21 +56,8 @@ function Home() {
     <div className="min-h-screen pb-20">
       <ShopHeader search={search} onSearchChange={setSearch} />
 
-      <div className="no-scrollbar flex gap-2 overflow-x-auto px-3 pb-1 text-[11px] font-semibold">
-        {[
-          { icon: Truck, label: "Free delivery over Rs. 2,500" },
-          { icon: BadgePercent, label: "Up to 60% off" },
-          { icon: ShieldCheck, label: "Cash on delivery" },
-        ].map((chip) => (
-          <span
-            key={chip.label}
-            className="flex shrink-0 items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-secondary-foreground"
-          >
-            <chip.icon className="size-3.5" />
-            {chip.label}
-          </span>
-        ))}
-      </div>
+      <CategoryTabs active={activeTab} onChange={setActiveTab} />
+      <IncentivesBanner />
 
       <section id="categories" className="scroll-mt-28 px-3 pt-4">
         <h2 className="mb-2 font-display text-lg font-bold">Shop by category</h2>
