@@ -19,12 +19,7 @@ export function BottomNav() {
           <Home className="size-5" />
           Home
         </Link>
-        <Link
-          to="/"
-          hash="categories"
-          className={linkClass}
-          activeOptions={{ includeHash: true, exact: true }}
-        >
+        <Link to="/categories" className={linkClass} activeProps={{ className: "text-primary" }}>
           <LayoutGrid className="size-5" />
           Categories
         </Link>

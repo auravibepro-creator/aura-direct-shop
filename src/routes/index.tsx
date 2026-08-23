@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Flame, Truck, BadgePercent, ShieldCheck } from "lucide-react";
+import { Flame } from "lucide-react";
 
 import { ShopHeader } from "@/components/shop/ShopHeader";
 import { BottomNav } from "@/components/shop/BottomNav";
+import { CategoryTabs } from "@/components/shop/CategoryTabs";
+import { IncentivesBanner } from "@/components/shop/IncentivesBanner";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchCategories, fetchProducts } from "@/lib/shop";
@@ -31,21 +33,25 @@ export const Route = createFileRoute("/")({
 function Home() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("All");
 
   const categories = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
   const products = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return (products.data ?? []).filter((product) => {
+    const tabTerm = activeTab === "All" ? "" : activeTab.toLowerCase();
+    const filtered = (products.data ?? []).filter((product) => {
+      const text = `${product.name} ${product.description}`.toLowerCase();
       const matchesCategory = !activeCategory || product.category_id === activeCategory;
-      const matchesTerm =
-        !term ||
-        product.name.toLowerCase().includes(term) ||
-        product.description.toLowerCase().includes(term);
-      return matchesCategory && matchesTerm;
+      const matchesTerm = !term || text.includes(term);
+      const matchesTab = !tabTerm || text.includes(tabTerm);
+      return matchesCategory && matchesTerm && matchesTab;
     });
-  }, [products.data, search, activeCategory]);
+    // Keep the grid populated when a tab has no dedicated inventory yet.
+    if (filtered.length === 0 && tabTerm && !term && !activeCategory) return products.data ?? [];
+    return filtered;
+  }, [products.data, search, activeCategory, activeTab]);
 
   const flashDeals = useMemo(
     () => (products.data ?? []).filter((product) => product.is_featured).slice(0, 6),
@@ -56,21 +62,8 @@ function Home() {
     <div className="min-h-screen pb-20">
       <ShopHeader search={search} onSearchChange={setSearch} />
 
-      <div className="no-scrollbar flex gap-2 overflow-x-auto px-3 pb-1 text-[11px] font-semibold">
-        {[
-          { icon: Truck, label: "Free delivery over Rs. 2,500" },
-          { icon: BadgePercent, label: "Up to 60% off" },
-          { icon: ShieldCheck, label: "Cash on delivery" },
-        ].map((chip) => (
-          <span
-            key={chip.label}
-            className="flex shrink-0 items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-secondary-foreground"
-          >
-            <chip.icon className="size-3.5" />
-            {chip.label}
-          </span>
-        ))}
-      </div>
+      <CategoryTabs active={activeTab} onChange={setActiveTab} />
+      <IncentivesBanner />
 
       <section id="categories" className="scroll-mt-28 px-3 pt-4">
         <h2 className="mb-2 font-display text-lg font-bold">Shop by category</h2>
