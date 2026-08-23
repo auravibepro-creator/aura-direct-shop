@@ -238,6 +238,25 @@ function ProductPage() {
         <span className="text-xs text-muted-foreground">{product.stock} in stock</span>
       </section>
 
+      <section className="mt-4 px-3">
+        <h3 className="mb-2 text-sm font-bold">Service / Benefits</h3>
+        <div className="flex flex-wrap gap-2">
+          {[
+            "Delivered in 2–4 business days",
+            "FREE SHIPPING over Rs. 2,500",
+            "Cash on delivery",
+            "Easy returns",
+          ].map((benefit) => (
+            <span
+              key={benefit}
+              className="rounded-full border border-success px-3 py-1.5 text-[11px] font-bold text-success"
+            >
+              ✔ {benefit}
+            </span>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-5 px-3">
         <h3 className="mb-1 text-sm font-bold">Product details</h3>
         <p className="text-sm leading-relaxed whitespace-pre-line text-muted-foreground">
@@ -245,14 +264,23 @@ function ProductPage() {
         </p>
       </section>
 
-      <div className="fixed bottom-0 left-0 z-30 w-full border-t border-border bg-card p-3">
-        <div className="mx-auto flex max-w-md gap-2">
-          <Button variant="outline" className="flex-1" asChild>
-            <Link to="/cart">View cart</Link>
+      <div className="fixed bottom-0 left-0 z-30 w-full border-t border-border bg-card px-3 pt-2 pb-3">
+        <div className="mx-auto flex max-w-md items-center gap-2">
+          <Button variant="outline" size="lg" className="rounded-full" asChild>
+            <Link to="/cart">Cart</Link>
           </Button>
-          <Button className="flex-2 brand-gradient text-primary-foreground" onClick={handleAdd}>
-            Add to cart · {formatPKR(product.price * quantity)}
-          </Button>
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="flex-1 rounded-full bg-hot px-4 py-2.5 text-center text-deal-foreground"
+          >
+            <span className="block text-sm font-extrabold">
+              {off ? `-${off}% now! Add to cart!` : "Add to cart"}
+            </span>
+            <span className="block text-[11px] opacity-90">
+              {formatPKR(product.price * quantity)} · delivery in 2–4 days
+            </span>
+          </button>
         </div>
       </div>
 
