@@ -131,16 +131,34 @@ function ProductPage() {
         </div>
       ) : null}
 
-      <div className="px-3 pt-2">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-extrabold text-deal">{formatPKR(product.price)}</span>
+      <div className="flex items-center gap-3 bg-promo px-3 py-2 text-[11px] font-semibold text-success">
+        <span className="rounded-md bg-deal px-2 py-0.5 text-[10px] font-extrabold text-deal-foreground">
+          SAVINGS
+        </span>
+        <span>✔ Free shipping</span>
+        <span>✔ Cash on delivery</span>
+      </div>
+
+      <div className="px-3 pt-3">
+        <h2 className="text-base leading-snug font-semibold">{product.name}</h2>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           {product.compare_at_price ? (
             <span className="text-sm text-muted-foreground line-through">
               {formatPKR(product.compare_at_price)}
             </span>
           ) : null}
+          <span className="text-2xl font-extrabold text-deal">{formatPKR(product.price)}</span>
+          {off ? (
+            <span className="rounded-md bg-success px-2 py-1 text-xs font-extrabold text-deal-foreground italic">
+              {off}% OFF
+            </span>
+          ) : null}
+          {product.stock > 0 && product.stock <= 20 ? (
+            <span className="rounded-md bg-hot px-2 py-1 text-xs font-extrabold text-deal-foreground">
+              ONLY {product.stock} LEFT
+            </span>
+          ) : null}
         </div>
-        <h2 className="mt-1 text-base leading-snug font-semibold">{product.name}</h2>
         <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Star className="size-3.5 fill-gold text-gold" />
