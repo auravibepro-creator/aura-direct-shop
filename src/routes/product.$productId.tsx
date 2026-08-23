@@ -131,16 +131,34 @@ function ProductPage() {
         </div>
       ) : null}
 
-      <div className="px-3 pt-2">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-extrabold text-deal">{formatPKR(product.price)}</span>
+      <div className="flex items-center gap-3 bg-promo px-3 py-2 text-[11px] font-semibold text-success">
+        <span className="rounded-md bg-deal px-2 py-0.5 text-[10px] font-extrabold text-deal-foreground">
+          SAVINGS
+        </span>
+        <span>✔ Free shipping</span>
+        <span>✔ Cash on delivery</span>
+      </div>
+
+      <div className="px-3 pt-3">
+        <h2 className="text-base leading-snug font-semibold">{product.name}</h2>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           {product.compare_at_price ? (
             <span className="text-sm text-muted-foreground line-through">
               {formatPKR(product.compare_at_price)}
             </span>
           ) : null}
+          <span className="text-2xl font-extrabold text-deal">{formatPKR(product.price)}</span>
+          {off ? (
+            <span className="rounded-md bg-success px-2 py-1 text-xs font-extrabold text-deal-foreground italic">
+              {off}% OFF
+            </span>
+          ) : null}
+          {product.stock > 0 && product.stock <= 20 ? (
+            <span className="rounded-md bg-hot px-2 py-1 text-xs font-extrabold text-deal-foreground">
+              ONLY {product.stock} LEFT
+            </span>
+          ) : null}
         </div>
-        <h2 className="mt-1 text-base leading-snug font-semibold">{product.name}</h2>
         <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Star className="size-3.5 fill-gold text-gold" />
@@ -220,6 +238,25 @@ function ProductPage() {
         <span className="text-xs text-muted-foreground">{product.stock} in stock</span>
       </section>
 
+      <section className="mt-4 px-3">
+        <h3 className="mb-2 text-sm font-bold">Service / Benefits</h3>
+        <div className="flex flex-wrap gap-2">
+          {[
+            "Delivered in 2–4 business days",
+            "FREE SHIPPING over Rs. 2,500",
+            "Cash on delivery",
+            "Easy returns",
+          ].map((benefit) => (
+            <span
+              key={benefit}
+              className="rounded-full border border-success px-3 py-1.5 text-[11px] font-bold text-success"
+            >
+              ✔ {benefit}
+            </span>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-5 px-3">
         <h3 className="mb-1 text-sm font-bold">Product details</h3>
         <p className="text-sm leading-relaxed whitespace-pre-line text-muted-foreground">
@@ -227,14 +264,23 @@ function ProductPage() {
         </p>
       </section>
 
-      <div className="fixed bottom-0 left-0 z-30 w-full border-t border-border bg-card p-3">
-        <div className="mx-auto flex max-w-md gap-2">
-          <Button variant="outline" className="flex-1" asChild>
-            <Link to="/cart">View cart</Link>
+      <div className="fixed bottom-0 left-0 z-30 w-full border-t border-border bg-card px-3 pt-2 pb-3">
+        <div className="mx-auto flex max-w-md items-center gap-2">
+          <Button variant="outline" size="lg" className="rounded-full" asChild>
+            <Link to="/cart">Cart</Link>
           </Button>
-          <Button className="flex-2 brand-gradient text-primary-foreground" onClick={handleAdd}>
-            Add to cart · {formatPKR(product.price * quantity)}
-          </Button>
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="flex-1 rounded-full bg-hot px-4 py-2.5 text-center text-deal-foreground"
+          >
+            <span className="block text-sm font-extrabold">
+              {off ? `-${off}% now! Add to cart!` : "Add to cart"}
+            </span>
+            <span className="block text-[11px] opacity-90">
+              {formatPKR(product.price * quantity)} · delivery in 2–4 days
+            </span>
+          </button>
         </div>
       </div>
 

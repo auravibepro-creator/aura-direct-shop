@@ -89,7 +89,42 @@ function CheckoutPage() {
 
   return (
     <div className="min-h-screen pb-28">
-      <ShopHeader title="Checkout" showBack />
+      <ShopHeader title={`Checkout (${ordered.length})`} showBack />
+
+      <div className="mx-3 mt-3 rounded-xl border border-success px-3 py-2.5 text-[12px] font-semibold text-success">
+        ✔ Free shipping over Rs. 2,500 · Cash on delivery · All data is safeguarded
+      </div>
+
+      {ordered.length > 0 ? (
+        <section className="mx-3 mt-3 rounded-2xl bg-card p-3 card-shadow">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold">Item details ({ordered.length})</h2>
+            <Link to="/cart" className="text-xs font-semibold text-muted-foreground">
+              View details ›
+            </Link>
+          </div>
+          <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
+            {ordered.map((item) => (
+              <div key={`${item.productId}-${item.variant ?? ""}`} className="w-24 shrink-0">
+                <div className="aspect-square overflow-hidden rounded-lg bg-muted">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
+                  ) : null}
+                </div>
+                <p className="mt-1 text-[11px] font-bold text-deal">
+                  {formatPKR(item.price)}
+                  <span className="font-medium text-muted-foreground"> ×{item.quantity}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mx-3 mt-3 space-y-3 rounded-2xl bg-card p-4 card-shadow">
         <h2 className="text-sm font-bold">Delivery details</h2>
@@ -171,15 +206,34 @@ function CheckoutPage() {
         </div>
       </section>
 
-      <div className="fixed bottom-0 left-0 z-30 w-full border-t border-border bg-card p-3">
-        <Button
-          onClick={placeOrder}
-          className="mx-auto flex w-full max-w-md gap-2 brand-gradient text-primary-foreground"
-          size="lg"
-        >
-          <MessageCircle className="size-5" />
-          Place order on WhatsApp
-        </Button>
+      <section className="mx-3 mt-3 rounded-2xl bg-card p-4 card-shadow">
+        <h2 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-success">
+          ✔ Delivery guarantee
+        </h2>
+        <ul className="space-y-1 text-[12px] text-success">
+          <li>✔ Return if the item arrives damaged</li>
+          <li>✔ Refund if the order is never delivered</li>
+          <li>✔ Your details are only shared with our delivery rider</li>
+        </ul>
+      </section>
+
+      <div className="fixed bottom-0 left-0 z-30 w-full border-t border-border bg-card px-3 pt-2 pb-3">
+        <div className="mx-auto flex max-w-md items-center gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-lg font-extrabold text-deal">{formatPKR(grandTotal)}</p>
+            <p className="text-[11px] text-muted-foreground">
+              {shipping === 0 ? "Free delivery" : `+ ${formatPKR(shipping)} delivery`}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={placeOrder}
+            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-hot px-4 py-3 text-sm font-extrabold text-deal-foreground"
+          >
+            <MessageCircle className="size-5" />
+            Submit order ({ordered.length})
+          </button>
+        </div>
       </div>
     </div>
   );
