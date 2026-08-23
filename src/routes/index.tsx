@@ -33,6 +33,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("All");
 
   const categories = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
   const products = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
