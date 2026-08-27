@@ -111,6 +111,68 @@ export function AdminModeProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // Voice trigger: saying "login please" opens the same prompt.
+  useEffect(() => {
+    const Recognition =
+      (window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown })
+        .SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition;
+    if (!Recognition) return;
+
+    let stopped = false;
+    const recognition = new (Recognition as new () => {
+      lang: string;
+      continuous: boolean;
+      interimResults: boolean;
+      start: () => void;
+      stop: () => void;
+      onresult: ((event: unknown) => void) | null;
+      onend: (() => void) | null;
+      onerror: (() => void) | null;
+    })();
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event: unknown) => {
+      const results = (event as { results: ArrayLike<ArrayLike<{ transcript: string }>> }).results;
+      for (let i = 0; i < results.length; i += 1) {
+        const text = results[i]?.[0]?.transcript?.toLowerCase() ?? "";
+        if (text.includes("login please") || text.includes("log in please")) {
+          setPromptOpen(true);
+        }
+      }
+    };
+    // Chrome ends the session periodically — restart until unmounted.
+    recognition.onend = () => {
+      if (!stopped) {
+        try {
+          recognition.start();
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+    recognition.onerror = () => {
+      /* microphone unavailable or permission denied — ignore silently */
+    };
+
+    try {
+      recognition.start();
+    } catch {
+      /* ignore */
+    }
+
+    return () => {
+      stopped = true;
+      try {
+        recognition.stop();
+      } catch {
+        /* ignore */
+      }
+    };
+  }, []);
+
   const lock = useCallback(() => {
     setPassword(null);
     setEditMode(false);
