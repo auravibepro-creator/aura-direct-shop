@@ -75,6 +75,8 @@
   --animate-ticker: ticker 22s linear infinite;
   --animate-pop-in: pop-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-rise: rise 0.28s ease-out;
+  --animate-spin-box: spin-box 3.2s linear infinite;
+  --animate-lift: lift 1.6s ease-in-out infinite;
 }
 
 :root {
@@ -145,6 +147,25 @@
   }
 }
 
+@keyframes spin-box {
+  from {
+    transform: rotateX(-18deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-18deg) rotateY(360deg);
+  }
+}
+
+@keyframes lift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -188,3 +209,12 @@
   }
 }
 
+
+@utility scene-3d {
+  perspective: 700px;
+}
+
+@utility preserve-3d {
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
