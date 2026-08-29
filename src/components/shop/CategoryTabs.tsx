@@ -1,15 +1,14 @@
-import { TOP_TABS } from "@/lib/taxonomy";
-
 type Props = {
+  tabs: string[];
   active: string;
   onChange: (tab: string) => void;
 };
 
 /** Temu-style horizontally scrolling top category bar with an underlined active tab. */
-export function CategoryTabs({ active, onChange }: Props) {
+export function CategoryTabs({ tabs, active, onChange }: Props) {
   return (
     <div className="no-scrollbar flex gap-5 overflow-x-auto border-b border-border bg-background px-3">
-      {TOP_TABS.map((tab) => {
+      {tabs.map((tab) => {
         const isActive = tab === active;
         return (
           <button

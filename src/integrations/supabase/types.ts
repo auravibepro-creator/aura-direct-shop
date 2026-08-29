@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -86,6 +86,7 @@ export type Database = {
           rating: number
           sold_count: number
           stock: number
+          tab_id: string | null
           updated_at: string
           variants: string[]
           video_url: string | null
@@ -104,6 +105,7 @@ export type Database = {
           rating?: number
           sold_count?: number
           stock?: number
+          tab_id?: string | null
           updated_at?: string
           variants?: string[]
           video_url?: string | null
@@ -122,6 +124,7 @@ export type Database = {
           rating?: number
           sold_count?: number
           stock?: number
+          tab_id?: string | null
           updated_at?: string
           variants?: string[]
           video_url?: string | null
@@ -132,6 +135,81 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_tab_id_fkey"
+            columns: ["tab_id"]
+            isOneToOne: false
+            referencedRelation: "tabs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tabs: {
+        Row: {
+          commission_percent: number
+          created_at: string
+          icon: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          commission_percent?: number
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          commission_percent?: number
+          created_at?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      vendors: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          password_hash: string
+          tab_id: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          password_hash: string
+          tab_id?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          password_hash?: string
+          tab_id?: string | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_tab_id_fkey"
+            columns: ["tab_id"]
+            isOneToOne: false
+            referencedRelation: "tabs"
             referencedColumns: ["id"]
           },
         ]

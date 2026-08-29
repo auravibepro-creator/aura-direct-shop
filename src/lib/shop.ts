@@ -28,7 +28,31 @@ export type Product = {
   is_featured: boolean;
   is_active: boolean;
   category_id: string | null;
+  tab_id?: string | null;
 };
+
+export type Tab = {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  sort_order: number;
+  is_active: boolean;
+  commission_percent: number;
+};
+
+export async function fetchTabs(): Promise<Tab[]> {
+  const { data, error } = await supabase
+    .from("tabs")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((row) => ({
+    ...(row as unknown as Tab),
+    commission_percent: Number((row as Record<string, unknown>)["commission_percent"] ?? 0),
+  }));
+}
 
 export function formatPKR(amount: number) {
   return `Rs. ${Math.round(amount).toLocaleString("en-PK")}`;
