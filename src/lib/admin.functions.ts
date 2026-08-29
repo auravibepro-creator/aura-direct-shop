@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { hashPassword } from "@/lib/hash";
+
 const passwordShape = z.object({ password: z.string().min(1).max(200) });
 
 const productShape = z.object({
@@ -16,6 +18,7 @@ const productShape = z.object({
   is_featured: z.boolean().default(false),
   is_active: z.boolean().default(true),
   category_id: z.string().uuid().nullable().default(null),
+  tab_id: z.string().uuid().nullable().default(null),
 });
 
 const categoryShape = z.object({
@@ -222,14 +225,6 @@ export const adminReorderTabs = createServerFn({ method: "POST" })
   });
 
 /* ---------- Vendor accounts (master admin) ---------- */
-
-export async function hashPassword(value: string) {
-  const bytes = new TextEncoder().encode(`auravibe:${value}`);
-  const digest = await crypto.subtle.digest("SHA-256", bytes);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
 
 export const adminListVendors = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => passwordShape.parse(data))
