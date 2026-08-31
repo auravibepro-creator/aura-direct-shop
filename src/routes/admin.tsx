@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StorefrontTabsPanel } from "@/components/admin/StorefrontTabsPanel";
+import { VendorsPanel } from "@/components/admin/VendorsPanel";
 import { formatPKR } from "@/lib/shop";
 import {
   adminDeleteAnnouncement,
@@ -225,7 +227,7 @@ function AdminPage() {
       </div>
 
       <Tabs defaultValue="products" className="mt-3 px-3">
-        <TabsList className="w-full">
+        <TabsList className="no-scrollbar w-full overflow-x-auto">
           <TabsTrigger value="products" className="flex-1">
             Products
           </TabsTrigger>
@@ -235,7 +237,21 @@ function AdminPage() {
           <TabsTrigger value="ticker" className="flex-1">
             Ticker
           </TabsTrigger>
+          <TabsTrigger value="storefront" className="flex-1">
+            Tabs
+          </TabsTrigger>
+          <TabsTrigger value="vendors" className="flex-1">
+            Vendors
+          </TabsTrigger>
         </TabsList>
+
+        {/* MASTER ADMIN: storefront tabs + vendor logins */}
+        <TabsContent value="storefront">
+          <StorefrontTabsPanel password={password} />
+        </TabsContent>
+        <TabsContent value="vendors">
+          <VendorsPanel password={password} />
+        </TabsContent>
 
         {/* PRODUCTS */}
         <TabsContent value="products" className="space-y-3">
