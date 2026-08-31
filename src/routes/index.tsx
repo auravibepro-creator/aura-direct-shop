@@ -9,7 +9,8 @@ import { CategoryTabs } from "@/components/shop/CategoryTabs";
 import { IncentivesBanner } from "@/components/shop/IncentivesBanner";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchCategories, fetchProducts } from "@/lib/shop";
+import { RewardBox } from "@/components/shop/RewardBox";
+import { fetchCategories, fetchProducts, fetchTabs } from "@/lib/shop";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,21 +38,32 @@ function Home() {
 
   const categories = useQuery({ queryKey: ["categories"], queryFn: fetchCategories });
   const products = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
+  const tabs = useQuery({ queryKey: ["tabs"], queryFn: fetchTabs, staleTime: 60_000 });
+
+  const tabNames = useMemo(() => {
+    const names = (tabs.data ?? []).map((tab) => tab.name);
+    return names.includes("All") ? names : ["All", ...names];
+  }, [tabs.data]);
+  const activeTabRow = useMemo(
+    () => (tabs.data ?? []).find((tab) => tab.name === activeTab) ?? null,
+    [tabs.data, activeTab],
+  );
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
     const tabTerm = activeTab === "All" ? "" : activeTab.toLowerCase();
+    const tabId = activeTab === "All" ? null : (activeTabRow?.id ?? null);
     const filtered = (products.data ?? []).filter((product) => {
       const text = `${product.name} ${product.description}`.toLowerCase();
       const matchesCategory = !activeCategory || product.category_id === activeCategory;
       const matchesTerm = !term || text.includes(term);
-      const matchesTab = !tabTerm || text.includes(tabTerm);
+      const matchesTab = !tabTerm || product.tab_id === tabId || text.includes(tabTerm);
       return matchesCategory && matchesTerm && matchesTab;
     });
     // Keep the grid populated when a tab has no dedicated inventory yet.
     if (filtered.length === 0 && tabTerm && !term && !activeCategory) return products.data ?? [];
     return filtered;
-  }, [products.data, search, activeCategory, activeTab]);
+  }, [products.data, search, activeCategory, activeTab, activeTabRow]);
 
   const flashDeals = useMemo(
     () => (products.data ?? []).filter((product) => product.is_featured).slice(0, 6),
@@ -62,7 +74,7 @@ function Home() {
     <div className="min-h-screen pb-20">
       <ShopHeader search={search} onSearchChange={setSearch} />
 
-      <CategoryTabs active={activeTab} onChange={setActiveTab} />
+      <CategoryTabs tabs={tabNames} active={activeTab} onChange={setActiveTab} />
       <IncentivesBanner />
 
       <section id="categories" className="scroll-mt-28 px-3 pt-4">
@@ -136,6 +148,7 @@ function Home() {
         )}
       </section>
 
+      <RewardBox />
       <BottomNav />
     </div>
   );

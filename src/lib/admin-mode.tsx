@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { adminLogin, adminSaveProduct } from "@/lib/admin.functions";
+import { fileToCompressedDataUrl } from "@/lib/image-compress";
 import { discountPercent, formatPKR, type Product } from "@/lib/shop";
 
 const PASSWORD_KEY = "auravibe-admin-pass";
@@ -36,32 +37,6 @@ export function useAdminMode() {
   const ctx = useContext(AdminModeContext);
   if (!ctx) throw new Error("useAdminMode must be used inside AdminModeProvider");
   return ctx;
-}
-
-/** Downscale + compress a picked image so it can be stored inline. */
-async function fileToCompressedDataUrl(file: File, maxSize = 900): Promise<string> {
-  const dataUrl = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Could not read the image"));
-    reader.readAsDataURL(file);
-  });
-
-  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error("Could not decode the image"));
-    img.src = dataUrl;
-  });
-
-  const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(image.width * scale);
-  canvas.height = Math.round(image.height * scale);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return dataUrl;
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", 0.82);
 }
 
 export function AdminModeProvider({ children }: { children: ReactNode }) {
@@ -139,19 +114,24 @@ export function AdminModeProvider({ children }: { children: ReactNode }) {
       for (let i = 0; i < results.length; i += 1) {
         const text = results[i]?.[0]?.transcript?.toLowerCase() ?? "";
         if (text.includes("login please") || text.includes("log in please")) {
-          setPromptOpen(true);
+          setPromptOpen((open) => open || true);
         }
       }
     };
-    // Chrome ends the session periodically — restart until unmounted.
+    // Chrome ends the session periodically. Restart on a timer with a hard cap so a
+    // permanently failing microphone can never spin into a tight restart loop.
+    let restarts = 0;
+    let restartTimer: number | undefined;
     recognition.onend = () => {
-      if (!stopped) {
+      if (stopped || restarts >= 20) return;
+      restarts += 1;
+      restartTimer = window.setTimeout(() => {
         try {
           recognition.start();
         } catch {
           /* ignore */
         }
-      }
+      }, 1500);
     };
     recognition.onerror = () => {
       /* microphone unavailable or permission denied — ignore silently */
@@ -165,6 +145,7 @@ export function AdminModeProvider({ children }: { children: ReactNode }) {
 
     return () => {
       stopped = true;
+      if (restartTimer) window.clearTimeout(restartTimer);
       try {
         recognition.stop();
       } catch {
