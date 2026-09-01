@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StorefrontTabsPanel } from "@/components/admin/StorefrontTabsPanel";
 import { VendorsPanel } from "@/components/admin/VendorsPanel";
+import { TickerStylePanel } from "@/components/admin/TickerStylePanel";
 import { formatPKR } from "@/lib/shop";
 import {
   adminDeleteAnnouncement,
