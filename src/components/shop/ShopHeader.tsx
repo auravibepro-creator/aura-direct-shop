@@ -20,6 +20,11 @@ export function ShopHeader({ search, onSearchChange, title, showBack }: Props) {
     queryFn: fetchAnnouncements,
     staleTime: 60_000,
   });
+  const { data: tickerStyle } = useQuery({
+    queryKey: ["ticker-style"],
+    queryFn: fetchTickerStyle,
+    staleTime: 60_000,
+  });
 
   return (
     <header className="sticky top-0 z-30 bg-background/95 backdrop-blur">
