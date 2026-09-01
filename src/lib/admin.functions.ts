@@ -178,7 +178,8 @@ export const adminListTabs = createServerFn({ method: "POST" })
     const { data: rows, error } = await db
       .from("tabs")
       .select("*")
-      .order("sort_order", { ascending: true });
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
     if (error) throw error;
     return { tabs: rows ?? [] };
   });
