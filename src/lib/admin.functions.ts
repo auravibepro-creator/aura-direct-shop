@@ -290,3 +290,43 @@ export const adminDeleteVendor = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true as const };
   });
+
+/* ---------- Ticker style settings (master admin) ---------- */
+
+const tickerStyleShape = z.object({
+  enabled: z.boolean().default(true),
+  height: z.number().min(16).max(80).default(26),
+  font_size: z.number().min(9).max(28).default(12),
+  speed: z.number().min(5).max(120).default(22),
+  gap: z.number().min(8).max(120).default(40),
+  bold: z.boolean().default(true),
+  bg_from: z.string().regex(/^#[0-9a-fA-F]{3,8}$/),
+  bg_to: z.string().regex(/^#[0-9a-fA-F]{3,8}$/),
+  text_color: z.string().regex(/^#[0-9a-fA-F]{3,8}$/),
+});
+
+export const adminGetTickerStyle = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => passwordShape.parse(data))
+  .handler(async ({ data }) => {
+    assertPassword(data.password);
+    const db = await admin();
+    const { data: row, error } = await db
+      .from("site_settings")
+      .select("value")
+      .eq("key", "ticker_style")
+      .maybeSingle();
+    if (error) throw error;
+    return { value: (row as { value?: unknown } | null)?.value ?? null };
+  });
+
+export const adminSaveTickerStyle = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => passwordShape.extend({ style: tickerStyleShape }).parse(data))
+  .handler(async ({ data }) => {
+    assertPassword(data.password);
+    const db = await admin();
+    const { error } = await db
+      .from("site_settings")
+      .upsert({ key: "ticker_style", value: data.style, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    return { ok: true as const };
+  });

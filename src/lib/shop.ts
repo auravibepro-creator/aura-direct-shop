@@ -110,3 +110,63 @@ export function normalizeProduct(row: unknown): Product {
     variants: (r["variants"] as string[]) ?? [],
   };
 }
+
+/* ---------- Ticker style (admin-controlled) ---------- */
+
+export type TickerStyle = {
+  enabled: boolean;
+  height: number;
+  font_size: number;
+  speed: number;
+  gap: number;
+  bold: boolean;
+  bg_from: string;
+  bg_to: string;
+  text_color: string;
+};
+
+export const DEFAULT_TICKER_STYLE: TickerStyle = {
+  enabled: true,
+  height: 26,
+  font_size: 12,
+  speed: 22,
+  gap: 40,
+  bold: true,
+  bg_from: "#e23c1f",
+  bg_to: "#f07a20",
+  text_color: "#ffffff",
+};
+
+export function normalizeTickerStyle(value: unknown): TickerStyle {
+  const v = (value ?? {}) as Record<string, unknown>;
+  const num = (key: keyof TickerStyle, min: number, max: number) => {
+    const n = Number(v[key]);
+    if (!Number.isFinite(n)) return DEFAULT_TICKER_STYLE[key] as number;
+    return Math.min(max, Math.max(min, n));
+  };
+  const color = (key: keyof TickerStyle) =>
+    typeof v[key] === "string" && /^#[0-9a-fA-F]{3,8}$/.test(v[key] as string)
+      ? (v[key] as string)
+      : (DEFAULT_TICKER_STYLE[key] as string);
+  return {
+    enabled: v["enabled"] == null ? true : Boolean(v["enabled"]),
+    height: num("height", 16, 80),
+    font_size: num("font_size", 9, 28),
+    speed: num("speed", 5, 120),
+    gap: num("gap", 8, 120),
+    bold: v["bold"] == null ? true : Boolean(v["bold"]),
+    bg_from: color("bg_from"),
+    bg_to: color("bg_to"),
+    text_color: color("text_color"),
+  };
+}
+
+export async function fetchTickerStyle(): Promise<TickerStyle> {
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "ticker_style")
+    .maybeSingle();
+  if (error) throw error;
+  return normalizeTickerStyle((data as { value?: unknown } | null)?.value);
+}

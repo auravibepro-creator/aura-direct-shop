@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Ticker } from "./Ticker";
 import { useCart } from "@/lib/cart";
-import { fetchAnnouncements } from "@/lib/shop";
+import { DEFAULT_TICKER_STYLE, fetchAnnouncements, fetchTickerStyle } from "@/lib/shop";
 
 type Props = {
   search?: string;
@@ -20,10 +20,15 @@ export function ShopHeader({ search, onSearchChange, title, showBack }: Props) {
     queryFn: fetchAnnouncements,
     staleTime: 60_000,
   });
+  const { data: tickerStyle } = useQuery({
+    queryKey: ["ticker-style"],
+    queryFn: fetchTickerStyle,
+    staleTime: 60_000,
+  });
 
   return (
     <header className="sticky top-0 z-30 bg-background/95 backdrop-blur">
-      <Ticker messages={messages ?? []} />
+      <Ticker messages={messages ?? []} style={tickerStyle ?? DEFAULT_TICKER_STYLE} />
       <div className="flex items-center gap-2 px-3 py-2.5">
         {showBack ? (
           <button
