@@ -28,7 +28,7 @@ export function ShopHeader({ search, onSearchChange, title, showBack }: Props) {
 
   return (
     <header className="sticky top-0 z-30 bg-background/95 backdrop-blur">
-      <Ticker messages={messages ?? []} />
+      <Ticker messages={messages ?? []} style={tickerStyle ?? DEFAULT_TICKER_STYLE} />
       <div className="flex items-center gap-2 px-3 py-2.5">
         {showBack ? (
           <button
