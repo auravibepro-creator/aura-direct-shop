@@ -178,7 +178,8 @@ export const adminListTabs = createServerFn({ method: "POST" })
     const { data: rows, error } = await db
       .from("tabs")
       .select("*")
-      .order("sort_order", { ascending: true });
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
     if (error) throw error;
     return { tabs: rows ?? [] };
   });
@@ -263,9 +264,12 @@ export const adminSaveVendor = createServerFn({ method: "POST" })
     const db = await admin();
     const { id, password, ...fields } = data.vendor;
     if (id) {
-      const patch: Record<string, unknown> = { ...fields };
-      if (password) patch["password_hash"] = await hashPassword(password);
+      const patch = {
+        ...fields,
+        ...(password ? { password_hash: await hashPassword(password) } : {}),
+      };
       const { error } = await db.from("vendors").update(patch).eq("id", id);
+
       if (error) throw error;
     } else {
       if (!password) throw new Error("A password is required for a new vendor login");
