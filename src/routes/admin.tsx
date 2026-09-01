@@ -599,6 +599,10 @@ function AdminPage() {
 
         {/* TICKER */}
         <TabsContent value="ticker" className="space-y-3">
+          <TickerStylePanel
+            password={password}
+            previewMessages={announcements.filter((a) => a.is_active).map((a) => a.message)}
+          />
           <Button
             className="w-full brand-gradient text-primary-foreground"
             onClick={() => setTickerForm({ message: "", is_active: true, sort_order: 0 })}
