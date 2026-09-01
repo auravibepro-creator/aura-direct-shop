@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Ticker } from "./Ticker";
 import { useCart } from "@/lib/cart";
-import { fetchAnnouncements } from "@/lib/shop";
+import { DEFAULT_TICKER_STYLE, fetchAnnouncements, fetchTickerStyle } from "@/lib/shop";
 
 type Props = {
   search?: string;
