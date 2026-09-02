@@ -330,3 +330,40 @@ export const adminSaveTickerStyle = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true as const };
   });
+
+/* ---------- Third-party overlay visibility (master admin) ---------- */
+
+const overlaySettingsShape = z.object({
+  hide_lovable_badge: z.boolean(),
+  hide_appsgeyser_banner: z.boolean(),
+});
+
+export const adminGetOverlaySettings = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => passwordShape.parse(data))
+  .handler(async ({ data }) => {
+    assertPassword(data.password);
+    const db = await admin();
+    const { data: row, error } = await db
+      .from("site_settings")
+      .select("value")
+      .eq("key", "overlay_settings")
+      .maybeSingle();
+    if (error) throw error;
+    return { value: (row as { value?: unknown } | null)?.value ?? null };
+  });
+
+export const adminSaveOverlaySettings = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    passwordShape.extend({ settings: overlaySettingsShape }).parse(data),
+  )
+  .handler(async ({ data }) => {
+    assertPassword(data.password);
+    const db = await admin();
+    const { error } = await db.from("site_settings").upsert({
+      key: "overlay_settings",
+      value: data.settings,
+      updated_at: new Date().toISOString(),
+    });
+    if (error) throw error;
+    return { ok: true as const };
+  });

@@ -170,3 +170,39 @@ export async function fetchTickerStyle(): Promise<TickerStyle> {
   if (error) throw error;
   return normalizeTickerStyle((data as { value?: unknown } | null)?.value);
 }
+
+/* ---------- Third-party overlay visibility (admin-controlled) ---------- */
+
+export type OverlaySettings = {
+  hide_lovable_badge: boolean;
+  hide_appsgeyser_banner: boolean;
+};
+
+export const DEFAULT_OVERLAY_SETTINGS: OverlaySettings = {
+  hide_lovable_badge: true,
+  hide_appsgeyser_banner: true,
+};
+
+export function normalizeOverlaySettings(value: unknown): OverlaySettings {
+  const v = (value ?? {}) as Record<string, unknown>;
+  return {
+    hide_lovable_badge:
+      v["hide_lovable_badge"] == null
+        ? DEFAULT_OVERLAY_SETTINGS.hide_lovable_badge
+        : Boolean(v["hide_lovable_badge"]),
+    hide_appsgeyser_banner:
+      v["hide_appsgeyser_banner"] == null
+        ? DEFAULT_OVERLAY_SETTINGS.hide_appsgeyser_banner
+        : Boolean(v["hide_appsgeyser_banner"]),
+  };
+}
+
+export async function fetchOverlaySettings(): Promise<OverlaySettings> {
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "overlay_settings")
+    .maybeSingle();
+  if (error) throw error;
+  return normalizeOverlaySettings((data as { value?: unknown } | null)?.value);
+}
