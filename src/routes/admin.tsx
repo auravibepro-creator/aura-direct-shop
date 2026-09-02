@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StorefrontTabsPanel } from "@/components/admin/StorefrontTabsPanel";
 import { VendorsPanel } from "@/components/admin/VendorsPanel";
 import { TickerStylePanel } from "@/components/admin/TickerStylePanel";
+import { OverlayPanel } from "@/components/admin/OverlayPanel";
 import { formatPKR } from "@/lib/shop";
 import {
   adminDeleteAnnouncement,
