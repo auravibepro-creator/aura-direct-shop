@@ -604,6 +604,7 @@ function AdminPage() {
             password={password}
             previewMessages={announcements.filter((a) => a.is_active).map((a) => a.message)}
           />
+          <OverlayPanel password={password} />
           <Button
             className="w-full brand-gradient text-primary-foreground"
             onClick={() => setTickerForm({ message: "", is_active: true, sort_order: 0 })}
