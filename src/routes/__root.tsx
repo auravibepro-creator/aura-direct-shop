@@ -124,7 +124,12 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        {/* Global layout wrapper: everything the app renders lives inside this
+            node. Anything injected outside it is treated as third-party
+            promotional chrome and removed by the global overlay guard. */}
+        <div data-app-root="" id="app-root">
+          {children}
+        </div>
         <Scripts />
       </body>
     </html>

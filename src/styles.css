@@ -218,3 +218,63 @@
   transform-style: preserve-3d;
   backface-visibility: visible;
 }
+
+/*
+ * Strict global overlay guard.
+ *
+ * Third-party scripts (AppsGeyser wrappers, ad networks, editor badges) inject
+ * fixed/sticky nodes directly into <body>, outside the app layout wrapper
+ * ([data-app-root]). Everything the app renders lives inside that wrapper, so
+ * anything matching these patterns outside of it is promotional chrome and is
+ * removed from layout and flow.
+ */
+body > iframe:not([data-app-root] iframe),
+body > ins,
+body > ins.adsbygoogle,
+body > [id*="appsgeyser" i],
+body > [class*="appsgeyser" i],
+body > [id*="banner" i],
+body > [class*="banner" i],
+body > [id*="ad-" i],
+body > [class*="ad-container" i],
+body > [id*="lovable-badge"],
+body > [class*="lovable-badge"],
+body > a[href*="lovable.dev"],
+body > div:has(> a[href*="lovable.dev"]),
+body > div:has(> iframe[src*="appsgeyser" i]),
+body > div:has(> iframe[src*="googlesyndication"]),
+body > div:has(> iframe[src*="doubleclick"]) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  position: fixed !important;
+  inset: auto auto -9999px -9999px !important;
+  z-index: -1 !important;
+}
+
+/* Any fixed/sticky bottom-anchored third-party node outside the app wrapper. */
+body > *:not([data-app-root]):not(script):not(style):not(link):not(noscript):not(template) {
+  &:is([style*="position: fixed"], [style*="position:fixed"]):is(
+      [style*="bottom: 0"],
+      [style*="bottom:0"],
+      [style*="bottom: 0px"],
+      [style*="bottom:0px"]
+    ) {
+    display: none !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Keep the app wrapper owning the full viewport, with no injected gutters. */
+[data-app-root] {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  width: 100%;
+}
