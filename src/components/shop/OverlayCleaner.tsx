@@ -85,10 +85,14 @@ export function OverlayCleaner() {
     ];
     if (selectors.length === 0) return;
 
+    const stray = settings.hide_appsgeyser_banner;
     let frame = 0;
     const sweep = () => {
       window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => hide(selectors));
+      frame = window.requestAnimationFrame(() => {
+        hide(selectors);
+        if (stray) sweepStrayFixedNodes();
+      });
     };
 
     sweep();
