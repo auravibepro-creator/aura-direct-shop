@@ -20,7 +20,31 @@ const BANNER_SELECTORS = [
   "ins.adsbygoogle",
   "[id*='banner_ad' i]",
   "[class*='ad-banner' i]",
+  "body > iframe",
+  "body > ins",
+  "body > [id*='banner' i]",
+  "body > [class*='banner' i]",
 ];
+
+/**
+ * Removes any fixed/sticky bottom-anchored node injected directly into <body>
+ * outside the app layout wrapper — covers wrappers with randomised ids/classes
+ * that no static selector can match.
+ */
+function sweepStrayFixedNodes() {
+  const viewportBottom = window.innerHeight;
+  Array.from(document.body.children).forEach((node) => {
+    if (!(node instanceof HTMLElement)) return;
+    if (node.hasAttribute("data-app-root")) return;
+    if (/^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(node.tagName)) return;
+    const style = window.getComputedStyle(node);
+    if (style.position !== "fixed" && style.position !== "sticky") return;
+    const rect = node.getBoundingClientRect();
+    if (rect.height === 0) return;
+    const anchoredBottom = rect.bottom >= viewportBottom - 4;
+    if (anchoredBottom || node.tagName === "IFRAME") node.remove();
+  });
+}
 
 function hide(selectors: string[]) {
   for (const selector of selectors) {
