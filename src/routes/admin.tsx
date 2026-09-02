@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StorefrontTabsPanel } from "@/components/admin/StorefrontTabsPanel";
 import { VendorsPanel } from "@/components/admin/VendorsPanel";
 import { TickerStylePanel } from "@/components/admin/TickerStylePanel";
+import { OverlayPanel } from "@/components/admin/OverlayPanel";
 import { formatPKR } from "@/lib/shop";
 import {
   adminDeleteAnnouncement,
@@ -604,6 +605,7 @@ function AdminPage() {
             password={password}
             previewMessages={announcements.filter((a) => a.is_active).map((a) => a.message)}
           />
+          <OverlayPanel password={password} />
           <Button
             className="w-full brand-gradient text-primary-foreground"
             onClick={() => setTickerForm({ message: "", is_active: true, sort_order: 0 })}

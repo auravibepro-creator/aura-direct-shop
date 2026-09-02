@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
 import { AdminModeProvider } from "../lib/admin-mode";
 import { Toaster } from "../components/ui/sonner";
+import { OverlayCleaner } from "../components/shop/OverlayCleaner";
 
 
 function NotFoundComponent() {
@@ -140,6 +141,7 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <Toaster position="top-center" />
+          <OverlayCleaner />
         </AdminModeProvider>
       </CartProvider>
     </QueryClientProvider>
