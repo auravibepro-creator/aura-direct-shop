@@ -232,6 +232,78 @@ export type Database = {
           },
         ]
       }
+      webauthn_challenges: {
+        Row: {
+          challenge: string
+          created_at: string
+          expires_at: string
+          id: string
+          purpose: string
+          scope: string
+          vendor_username: string | null
+        }
+        Insert: {
+          challenge: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          purpose: string
+          scope: string
+          vendor_username?: string | null
+        }
+        Update: {
+          challenge?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          purpose?: string
+          scope?: string
+          vendor_username?: string | null
+        }
+        Relationships: []
+      }
+      webauthn_credentials: {
+        Row: {
+          counter: number
+          created_at: string
+          credential_id: string
+          id: string
+          label: string
+          last_used_at: string | null
+          public_key: string
+          scope: string
+          secret: string
+          transports: string[]
+          vendor_username: string | null
+        }
+        Insert: {
+          counter?: number
+          created_at?: string
+          credential_id: string
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          public_key: string
+          scope: string
+          secret: string
+          transports?: string[]
+          vendor_username?: string | null
+        }
+        Update: {
+          counter?: number
+          created_at?: string
+          credential_id?: string
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          public_key?: string
+          scope?: string
+          secret?: string
+          transports?: string[]
+          vendor_username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
