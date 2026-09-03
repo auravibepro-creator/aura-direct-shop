@@ -201,6 +201,16 @@ function AdminPage() {
               {busy ? "Checking…" : "Unlock dashboard"}
             </Button>
           </form>
+          <div className="mt-3">
+            <BiometricLoginButton
+              scope="admin"
+              disabled={busy}
+              onSuccess={async (result) => {
+                setPassword(result.password);
+                await signIn(result.password);
+              }}
+            />
+          </div>
         </div>
       </div>
     );
