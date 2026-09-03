@@ -115,10 +115,6 @@ export const webauthnRegisterBegin = createServerFn({ method: "POST" })
             .eq("scope", "admin")
             .is("vendor_username", null);
     const { data: existing } = await existingQuery;
-    void client
-      .from("webauthn_credentials")
-      .select("credential_id")
-      .eq("scope", data.scope);
 
     const { rpID } = relyingParty();
     const options = await generateRegistrationOptions({
