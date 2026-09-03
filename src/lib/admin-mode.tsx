@@ -10,6 +10,8 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+import { BiometricLoginButton } from "@/components/auth/BiometricButtons";
 import { Pencil, Upload, X } from "lucide-react";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -252,6 +254,16 @@ function PasswordPrompt({
             {busy ? "Checking…" : "Unlock edit mode"}
           </Button>
         </form>
+        <BiometricLoginButton
+          scope="admin"
+          label="Unlock with fingerprint"
+          disabled={busy}
+          onSuccess={(result) => {
+            onUnlocked(result.password);
+            onOpenChange(false);
+            toast.success("Admin Edit Mode enabled");
+          }}
+        />
       </DialogContent>
     </Dialog>
   );
