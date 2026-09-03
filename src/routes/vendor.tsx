@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { BiometricEnrollButton, BiometricLoginButton } from "@/components/auth/BiometricButtons";
 import { fileToCompressedDataUrl } from "@/lib/image-compress";
 import { formatPKR } from "@/lib/shop";
 import {
@@ -187,6 +188,17 @@ function VendorPage() {
               {busy ? "Checking…" : "Sign in"}
             </Button>
           </form>
+          <div className="mt-3">
+            <BiometricLoginButton
+              scope="vendor"
+              username={username.trim() || undefined}
+              disabled={busy}
+              onSuccess={async (result) => {
+                if (result.username) setUsername(result.username);
+                await signIn(result.username ?? username.trim(), result.password);
+              }}
+            />
+          </div>
         </div>
       </div>
     );

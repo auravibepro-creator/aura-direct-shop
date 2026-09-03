@@ -15,6 +15,8 @@ import { StorefrontTabsPanel } from "@/components/admin/StorefrontTabsPanel";
 import { VendorsPanel } from "@/components/admin/VendorsPanel";
 import { TickerStylePanel } from "@/components/admin/TickerStylePanel";
 import { OverlayPanel } from "@/components/admin/OverlayPanel";
+import { BiometricPanel } from "@/components/admin/BiometricPanel";
+import { BiometricLoginButton } from "@/components/auth/BiometricButtons";
 import { formatPKR } from "@/lib/shop";
 import {
   adminDeleteAnnouncement,
@@ -616,6 +618,7 @@ function AdminPage() {
             previewMessages={announcements.filter((a) => a.is_active).map((a) => a.message)}
           />
           <OverlayPanel password={password} />
+          <BiometricPanel password={password} />
           <Button
             className="w-full brand-gradient text-primary-foreground"
             onClick={() => setTickerForm({ message: "", is_active: true, sort_order: 0 })}
