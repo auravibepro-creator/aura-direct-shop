@@ -102,11 +102,23 @@ export const webauthnRegisterBegin = createServerFn({ method: "POST" })
     else await assertVendorPassword(data.username, data.password);
 
     const accountName = data.scope === "admin" ? "store-admin" : data.username;
-    const { data: existing } = await client
+    const existingQuery =
+      data.scope === "vendor"
+        ? client
+            .from("webauthn_credentials")
+            .select("credential_id")
+            .eq("scope", "vendor")
+            .eq("vendor_username", data.username)
+        : client
+            .from("webauthn_credentials")
+            .select("credential_id")
+            .eq("scope", "admin")
+            .is("vendor_username", null);
+    const { data: existing } = await existingQuery;
+    void client
       .from("webauthn_credentials")
       .select("credential_id")
-      .eq("scope", data.scope)
-      .eq("vendor_username", data.scope === "vendor" ? data.username : null);
+      .eq("scope", data.scope);
 
     const { rpID } = relyingParty();
     const options = await generateRegistrationOptions({

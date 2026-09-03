@@ -27,9 +27,9 @@ export function BiometricLoginButton({
   onSuccess,
 }: {
   scope: "admin" | "vendor";
-  username?: string;
-  disabled?: boolean;
-  label?: string;
+  username?: string | undefined;
+  disabled?: boolean | undefined;
+  label?: string | undefined;
   onSuccess: (result: { password: string; username: string | null }) => void | Promise<void>;
 }) {
   const supported = useBiometricSupport();
@@ -68,9 +68,9 @@ export function BiometricEnrollButton({
   onDone,
 }: {
   scope: "admin" | "vendor";
-  username?: string;
+  username?: string | undefined;
   password: string;
-  onDone?: () => void | Promise<void>;
+  onDone?: (() => void | Promise<void>) | undefined;
 }) {
   const supported = useBiometricSupport();
   const [busy, setBusy] = useState(false);
