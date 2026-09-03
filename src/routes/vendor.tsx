@@ -212,6 +212,14 @@ function VendorPage() {
         Signed in as {session.username} · {tabName} · commission {commission}%
       </div>
 
+      <div className="mx-3 mt-2">
+        <BiometricEnrollButton
+          scope="vendor"
+          username={session.username}
+          password={session.password}
+        />
+      </div>
+
       <div className="flex items-center gap-2 px-3 pt-3">
         <Button
           size="sm"
