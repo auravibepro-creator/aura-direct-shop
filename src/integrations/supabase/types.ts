@@ -71,6 +71,138 @@ export type Database = {
         }
         Relationships: []
       }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          image: string | null
+          line_total: number
+          name: string
+          order_id: string
+          product_id: string | null
+          quantity: number
+          unit_price: number
+          variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          line_total?: number
+          name: string
+          order_id: string
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+          variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image?: string | null
+          line_total?: number
+          name?: string
+          order_id?: string
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+          variant?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          address: string
+          city: string | null
+          commission_amount: number
+          created_at: string
+          currency: string
+          customer_name: string
+          customer_phone: string
+          delivery_agent_id: string | null
+          id: string
+          latitude: number | null
+          location_accuracy: number | null
+          longitude: number | null
+          notes: string
+          order_code: string
+          payment_method: string
+          payment_reference: string | null
+          sales_agent_id: string | null
+          shipping: number
+          status: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address: string
+          city?: string | null
+          commission_amount?: number
+          created_at?: string
+          currency?: string
+          customer_name: string
+          customer_phone: string
+          delivery_agent_id?: string | null
+          id?: string
+          latitude?: number | null
+          location_accuracy?: number | null
+          longitude?: number | null
+          notes?: string
+          order_code?: string
+          payment_method?: string
+          payment_reference?: string | null
+          sales_agent_id?: string | null
+          shipping?: number
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string
+          city?: string | null
+          commission_amount?: number
+          created_at?: string
+          currency?: string
+          customer_name?: string
+          customer_phone?: string
+          delivery_agent_id?: string | null
+          id?: string
+          latitude?: number | null
+          location_accuracy?: number | null
+          longitude?: number | null
+          notes?: string
+          order_code?: string
+          payment_method?: string
+          payment_reference?: string | null
+          sales_agent_id?: string | null
+          shipping?: number
+          status?: string
+          subtotal?: number
+          total?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category_id: string | null
@@ -146,6 +278,36 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           key: string
@@ -161,6 +323,39 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json
+        }
+        Relationships: []
+      }
+      staff_settings: {
+        Row: {
+          base_salary: number
+          commission_percent: number
+          created_at: string
+          is_active: boolean
+          monthly_target: number
+          notes: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          base_salary?: number
+          commission_percent?: number
+          created_at?: string
+          is_active?: boolean
+          monthly_target?: number
+          notes?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          base_salary?: number
+          commission_percent?: number
+          created_at?: string
+          is_active?: boolean
+          monthly_target?: number
+          notes?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -194,6 +389,27 @@ export type Database = {
           name?: string
           slug?: string
           sort_order?: number
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -309,10 +525,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "agent" | "sales" | "delivery" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -439,6 +661,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "agent", "sales", "delivery", "user"],
+    },
   },
 } as const
