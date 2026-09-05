@@ -261,11 +261,12 @@ function CheckoutPage() {
           </div>
           <button
             type="button"
-            onClick={placeOrder}
-            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-hot px-4 py-3 text-sm font-extrabold text-deal-foreground"
+            disabled={placing}
+            onClick={() => void placeOrder()}
+            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-hot px-4 py-3 text-sm font-extrabold text-deal-foreground disabled:opacity-70"
           >
             <MessageCircle className="size-5" />
-            Submit order ({ordered.length})
+            {placing ? "Saving order…" : `Submit order (${ordered.length})`}
           </button>
         </div>
       </div>
