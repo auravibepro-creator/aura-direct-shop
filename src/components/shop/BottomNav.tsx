@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Home, LayoutGrid, ShoppingCart, Shield } from "lucide-react";
+import { Home, LayoutGrid, ShoppingCart, Shield, User } from "lucide-react";
 
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/lib/auth";
 
 const linkClass =
   "flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-muted-foreground";
