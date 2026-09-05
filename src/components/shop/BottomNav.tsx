@@ -36,6 +36,14 @@ export function BottomNav() {
           </span>
           Cart
         </Link>
+        <Link
+          to={session ? "/dashboard" : "/auth"}
+          className={linkClass}
+          activeProps={{ className: "text-primary" }}
+        >
+          <User className="size-5" />
+          Account
+        </Link>
         <Link to="/admin" className={linkClass} activeProps={{ className: "text-primary" }}>
           <Shield className="size-5" />
           Admin
