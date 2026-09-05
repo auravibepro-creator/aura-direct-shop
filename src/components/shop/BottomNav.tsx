@@ -9,6 +9,7 @@ const linkClass =
 
 export function BottomNav() {
   const { count } = useCart();
+  const { session } = useAuth();
 
   return (
     <nav
