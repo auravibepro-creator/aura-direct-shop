@@ -1,13 +1,15 @@
 import { Link } from "@tanstack/react-router";
-import { Home, LayoutGrid, ShoppingCart, Shield } from "lucide-react";
+import { Home, LayoutGrid, ShoppingCart, Shield, User } from "lucide-react";
 
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/lib/auth";
 
 const linkClass =
   "flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium text-muted-foreground";
 
 export function BottomNav() {
   const { count } = useCart();
+  const { session } = useAuth();
 
   return (
     <nav
@@ -33,6 +35,14 @@ export function BottomNav() {
             ) : null}
           </span>
           Cart
+        </Link>
+        <Link
+          to={session ? "/dashboard" : "/auth"}
+          className={linkClass}
+          activeProps={{ className: "text-primary" }}
+        >
+          <User className="size-5" />
+          Account
         </Link>
         <Link to="/admin" className={linkClass} activeProps={{ className: "text-primary" }}>
           <Shield className="size-5" />
