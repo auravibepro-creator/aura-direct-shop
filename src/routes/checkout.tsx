@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/lib/cart";
 import { FREE_SHIPPING_THRESHOLD, WHATSAPP_NUMBER, formatPKR } from "@/lib/shop";
+import { captureLocation, createOrder } from "@/lib/orders";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -45,7 +46,9 @@ function CheckoutPage() {
   const shipping = selectedTotal >= FREE_SHIPPING_THRESHOLD || selectedTotal === 0 ? 0 : 200;
   const grandTotal = selectedTotal + shipping;
 
-  const placeOrder = () => {
+  const [placing, setPlacing] = useState(false);
+
+  const placeOrder = async () => {
     const parsed = schema.safeParse(form);
     if (!parsed.success) {
       const next: Record<string, string> = {};
@@ -58,6 +61,36 @@ function CheckoutPage() {
       return;
     }
     setErrors({});
+    setPlacing(true);
+
+    // Capture GPS (best effort) and store the order so the sales, delivery and
+    // ledger dashboards have real data; WhatsApp still receives the message.
+    let orderCode = "";
+    try {
+      const location = await captureLocation();
+      const stored = await createOrder({
+        customerName: parsed.data.name,
+        customerPhone: parsed.data.phone,
+        address: parsed.data.address,
+        subtotal: selectedTotal,
+        shipping,
+        total: grandTotal,
+        location,
+        items: ordered.map((item) => ({
+          productId: item.productId,
+          name: item.name,
+          variant: item.variant,
+          image: item.image,
+          unitPrice: item.price,
+          quantity: item.quantity,
+        })),
+      });
+      orderCode = stored.order_code;
+    } catch {
+      toast.error("Saved locally only — sending your order on WhatsApp now.");
+    } finally {
+      setPlacing(false);
+    }
 
     const lines = ordered.map(
       (item, index) =>
@@ -66,6 +99,7 @@ function CheckoutPage() {
 
     const message = [
       "*NEW ORDER — AURA VIBE*",
+      ...(orderCode ? [`Order: ${orderCode}`] : []),
       "",
       "*Items*",
       ...lines,
