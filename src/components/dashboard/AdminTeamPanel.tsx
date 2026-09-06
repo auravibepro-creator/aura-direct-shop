@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Save, ShieldCheck } from "lucide-react";
+import { Loader2, Plus, Save, ShieldCheck, Trash2, UserPlus } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,24 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLE_LABELS, type AppRole } from "@/lib/auth";
+import {
+  createStaff,
+  deleteDesignation,
+  deleteStaff,
+  saveDesignation,
+  setStaffPassword,
+  updateStaffProfile,
+} from "@/lib/staff.functions";
+
+type Designation = { id: string; name: string; sort_order: number };
 
 type TeamMember = {
   id: string;
   email: string | null;
   full_name: string;
   phone: string | null;
+  designation: string;
+  must_change_credentials: boolean;
   roles: AppRole[];
   settings: {
     base_salary: number;
