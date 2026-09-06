@@ -46,7 +46,7 @@ export function BottomNav() {
         </Link>
         <Link to="/admin" className={linkClass} activeProps={{ className: "text-primary" }}>
           <Shield className="size-5" />
-          Admin
+          Account
         </Link>
       </div>
     </nav>

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Save, ShieldCheck } from "lucide-react";
+import { Loader2, Plus, Save, ShieldCheck, Trash2, UserPlus } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,24 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLE_LABELS, type AppRole } from "@/lib/auth";
+import {
+  createStaff,
+  deleteDesignation,
+  deleteStaff,
+  saveDesignation,
+  setStaffPassword,
+  updateStaffProfile,
+} from "@/lib/staff.functions";
+
+type Designation = { id: string; name: string; sort_order: number };
 
 type TeamMember = {
   id: string;
   email: string | null;
   full_name: string;
   phone: string | null;
+  designation: string;
+  must_change_credentials: boolean;
   roles: AppRole[];
   settings: {
     base_salary: number;
@@ -29,7 +41,10 @@ const ASSIGNABLE: AppRole[] = ["admin", "agent", "sales", "delivery", "user"];
 
 async function fetchTeam(): Promise<TeamMember[]> {
   const [profilesRes, rolesRes, settingsRes] = await Promise.all([
-    supabase.from("profiles").select("id,email,full_name,phone").order("created_at", { ascending: true }),
+    supabase
+      .from("profiles")
+      .select("id,email,full_name,phone,designation,must_change_credentials")
+      .order("created_at", { ascending: true }),
     supabase.from("user_roles").select("user_id,role"),
     supabase.from("staff_settings").select("user_id,base_salary,commission_percent,monthly_target,is_active"),
   ]);
@@ -61,6 +76,76 @@ export function AdminTeamPanel() {
   const { data, isLoading } = useQuery({ queryKey: ["team"], queryFn: fetchTeam });
   const [busyId, setBusyId] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<Record<string, { salary: string; commission: string; target: string }>>({});
+  const [newDesignation, setNewDesignation] = useState("");
+  const [staffForm, setStaffForm] = useState({
+    full_name: "",
+    designation: "",
+    password: "",
+    email: "",
+    phone: "",
+  });
+  const [tempPasswords, setTempPasswords] = useState<Record<string, string>>({});
+  const [profileDrafts, setProfileDrafts] = useState<Record<string, { full_name: string; designation: string }>>({});
+  const [busy, setBusy] = useState(false);
+
+  const designationsQuery = useQuery({
+    queryKey: ["staff-designations"],
+    queryFn: async (): Promise<Designation[]> => {
+      const { data: rows, error } = await supabase
+        .from("staff_designations")
+        .select("id,name,sort_order")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+      if (error) throw error;
+      return (rows ?? []) as Designation[];
+    },
+  });
+  const designations = designationsQuery.data ?? [];
+
+  async function run(label: string, action: () => Promise<unknown>) {
+    setBusy(true);
+    try {
+      await action();
+      await queryClient.invalidateQueries({ queryKey: ["team"] });
+      await queryClient.invalidateQueries({ queryKey: ["staff-designations"] });
+      toast.success(label);
+      return true;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong.");
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function addDesignation() {
+    if (!newDesignation.trim()) return;
+    const ok = await run("Designation added.", () =>
+      saveDesignation({ data: { name: newDesignation.trim(), sort_order: designations.length + 1 } }),
+    );
+    if (ok) setNewDesignation("");
+  }
+
+  async function addStaff() {
+    if (!staffForm.full_name.trim() || !staffForm.designation.trim() || staffForm.password.length < 6) {
+      toast.error("Name, designation and a temporary password (6+ characters) are required.");
+      return;
+    }
+    const ok = await run("Staff account created.", () =>
+      createStaff({
+        data: {
+          full_name: staffForm.full_name.trim(),
+          designation: staffForm.designation.trim(),
+          password: staffForm.password,
+          email: staffForm.email.trim(),
+          phone: staffForm.phone.trim(),
+          role: "user",
+        },
+      }),
+    );
+    if (ok) setStaffForm({ full_name: "", designation: "", password: "", email: "", phone: "" });
+  }
+
 
   async function toggleRole(member: TeamMember, role: AppRole, enabled: boolean) {
     setBusyId(member.id);
