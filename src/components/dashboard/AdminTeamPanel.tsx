@@ -41,7 +41,10 @@ const ASSIGNABLE: AppRole[] = ["admin", "agent", "sales", "delivery", "user"];
 
 async function fetchTeam(): Promise<TeamMember[]> {
   const [profilesRes, rolesRes, settingsRes] = await Promise.all([
-    supabase.from("profiles").select("id,email,full_name,phone").order("created_at", { ascending: true }),
+    supabase
+      .from("profiles")
+      .select("id,email,full_name,phone,designation,must_change_credentials")
+      .order("created_at", { ascending: true }),
     supabase.from("user_roles").select("user_id,role"),
     supabase.from("staff_settings").select("user_id,base_salary,commission_percent,monthly_target,is_active"),
   ]);
