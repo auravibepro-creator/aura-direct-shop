@@ -282,27 +282,33 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          designation: string
           email: string | null
           full_name: string
           id: string
+          must_change_credentials: boolean
           phone: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          designation?: string
           email?: string | null
           full_name?: string
           id: string
+          must_change_credentials?: boolean
           phone?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          designation?: string
           email?: string | null
           full_name?: string
           id?: string
+          must_change_credentials?: boolean
           phone?: string | null
           updated_at?: string
         }
@@ -323,6 +329,30 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json
+        }
+        Relationships: []
+      }
+      staff_designations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
