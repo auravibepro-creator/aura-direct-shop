@@ -19,6 +19,8 @@ export type Profile = {
   full_name: string;
   phone: string | null;
   avatar_url: string | null;
+  designation?: string;
+  must_change_credentials?: boolean;
 };
 
 type AuthContextValue = {
